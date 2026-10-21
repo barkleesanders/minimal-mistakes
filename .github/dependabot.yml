@@ -1,0 +1,46 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule: { interval: "daily" }
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+    labels: [dependencies, github-actions]
+
+  - package-ecosystem: "npm"
+    directory: "/package.json"
+    schedule: { interval: "daily" }
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+    labels: [dependencies, javascript]
+    ignore: &ignore_major_minor_updates
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      types: { patterns: ["@types/*"] }
+      eslint: { patterns: ["eslint*", "@typescript-eslint/*"] }
+      testing: { patterns: ["jest*", "vitest*", "@testing-library/*"] }
+
+  - package-ecosystem: "bundler"
+    directory: "/Gemfile"
+    schedule: { interval: "daily" }
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+    labels: [dependencies, ruby]
+    ignore: *ignore_major_minor_updates
+
+  - package-ecosystem: "bundler"
+    directory: "/docs/Gemfile"
+    schedule: { interval: "daily" }
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+    labels: [dependencies, ruby]
+    ignore: *ignore_major_minor_updates
+
+  - package-ecosystem: "bundler"
+    directory: "/test/Gemfile"
+    schedule: { interval: "daily" }
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+    labels: [dependencies, ruby]
+    ignore: *ignore_major_minor_updates
