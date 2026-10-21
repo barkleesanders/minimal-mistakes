@@ -1,0 +1,45 @@
+name: CI
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  ruby:
+    name: Ruby (${{ matrix.ruby }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ['3.3', '4.0']
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: ruby/setup-ruby@b1da4809b005e0178fe08a1d57317bffc00b7b4c # v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - run: bundle exec bundler-audit check --update
+      - run: bundle exec rake -T
+      - run: gem build minimal-mistakes-jekyll.gemspec --output /tmp/theme.gem
+      - run: bundle exec jekyll build --source test --destination /tmp/theme-site --trace
+      - run: bundle exec ruby scripts/check-site.rb /tmp/theme-site
+  javascript:
+    name: JavaScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm audit --audit-level=low
+      - run: npm run build:js
+      - run: node --check assets/js/main.min.js
+      - run: node scripts/test-watch-js.mjs
+      - run: git diff --exit-code -- assets/js/main.min.js
