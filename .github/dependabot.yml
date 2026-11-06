@@ -6,6 +6,8 @@ updates:
     open-pull-requests-limit: 10
     rebase-strategy: auto
     labels: [dependencies, github-actions]
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "npm"
     directory: "/package.json"
@@ -20,6 +22,8 @@ updates:
       types: { patterns: ["@types/*"] }
       eslint: { patterns: ["eslint*", "@typescript-eslint/*"] }
       testing: { patterns: ["jest*", "vitest*", "@testing-library/*"] }
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "bundler"
     directory: "/Gemfile"
@@ -28,6 +32,8 @@ updates:
     rebase-strategy: auto
     labels: [dependencies, ruby]
     ignore: *ignore_major_minor_updates
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "bundler"
     directory: "/docs/Gemfile"
@@ -36,6 +42,8 @@ updates:
     rebase-strategy: auto
     labels: [dependencies, ruby]
     ignore: *ignore_major_minor_updates
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "bundler"
     directory: "/test/Gemfile"
@@ -44,3 +52,5 @@ updates:
     rebase-strategy: auto
     labels: [dependencies, ruby]
     ignore: *ignore_major_minor_updates
+    cooldown:
+      default-days: 7
